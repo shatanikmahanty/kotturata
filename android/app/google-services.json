@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "221949796439",
+    "firebase_url": "https://kotturata-2425c.firebaseio.com",
+    "project_id": "kotturata-2425c",
+    "storage_bucket": "kotturata-2425c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221949796439:android:89743784de2d7b8d728312",
+        "android_client_info": {
+          "package_name": "com.shatanik.kotturata"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "221949796439-vqhn5d024mp6he079qrgfs5mip4hfpv2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQYTjGmtViC-ZwGtF03e6fjIMgxYkqQsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "221949796439-vqhn5d024mp6he079qrgfs5mip4hfpv2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
