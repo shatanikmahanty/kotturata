@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class ArtistsDataBloc extends ChangeNotifier {
@@ -22,6 +21,7 @@ class ArtistsDataBloc extends ChangeNotifier {
       _artistsData.add(f);
     });
 
+    _artistsData.sort((a,b) =>  a['position'].compareTo(b['position']));
     notifyListeners();
   }
 

@@ -1,10 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:kotturata/blocs/artist_bloc.dart';
 import 'package:kotturata/models/download_progress.dart';
+import 'package:kotturata/styles.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
+import 'blocs/theme_bloc.dart';
 import 'pages/home.dart';
 
 void main() async {
@@ -24,8 +25,9 @@ void main() async {
   // );
 
   FirebaseApp app;
-  if(Firebase.apps.length == 0)
-  app = await Firebase.initializeApp();//name: 'kotturata', options: firebaseOptions);
+  if (Firebase.apps.length == 0)
+    app = await Firebase
+        .initializeApp(); //name: 'kotturata', options: firebaseOptions);
   // final FirebaseStorage storage = FirebaseStorage(
   //     app: app, storageBucket: 'gs://kotturata-2425c.appspot.com');
   runApp(MyApp());
@@ -39,18 +41,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-//  ThemeBloc themeChangeProvider = new ThemeBloc();
+  ThemeBloc themeChangeProvider = new ThemeBloc();
 
   @override
   void initState() {
-//    getCurrentAppTheme();
+    getCurrentAppTheme();
     super.initState();
   }
 
-//  void getCurrentAppTheme() async {
-//    themeChangeProvider.darkTheme =
-//    await themeChangeProvider.darkThemePreference.getTheme();
-//  }
+  void getCurrentAppTheme() async {
+    themeChangeProvider.darkTheme =
+        await themeChangeProvider.darkThemePreference.getTheme();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,68 +61,23 @@ class _MyAppState extends State<MyApp> {
           ChangeNotifierProvider<DownloadProgressModel>(
             create: (context) => DownloadProgressModel(),
           ),
-//          ChangeNotifierProvider<ThemeBloc>(
-//            create: (_) {
-//              return themeChangeProvider;
-//            },
-//          ),
-         ChangeNotifierProvider<ArtistsDataBloc>(
-           create: (context) => ArtistsDataBloc(),
-         ),
-//          ChangeNotifierProvider<PopularDataBloc>(
-//            create: (context) => PopularDataBloc(),
-//          ),
-//          ChangeNotifierProvider<RecentDataBloc>(
-//            create: (context) => RecentDataBloc(),
-//          ),
-//          ChangeNotifierProvider<RecommandedDataBloc>(
-//            create: (context) => RecommandedDataBloc(),
-//          ),
-//          ChangeNotifierProvider<UserBloc>(
-//            create: (context) => UserBloc(),
-//          ),
-//          ChangeNotifierProvider<BookmarkBloc>(
-//            create: (context) => BookmarkBloc(),
-//          ),
-//          ChangeNotifierProvider<CommentsBloc>(
-//            create: (context) => CommentsBloc(),
-//          ),
-//          ChangeNotifierProvider<NotificationBloc>(
-//            create: (context) => NotificationBloc(),
-//          ),
-//          ChangeNotifierProvider<ProfileNotificationBloc>(
-//            create: (context) => ProfileNotificationBloc(),
-//          ),
-//          ChangeNotifierProvider<InternetBloc>(
-//            create: (context) => InternetBloc(),
-//          ),
-//          ChangeNotifierProvider<ViralDataBloc>(
-//            create: (context) => ViralDataBloc(),
-//          ),
-//          ChangeNotifierProvider<ViralCommentsBloc>(
-//            create: (context) => ViralCommentsBloc(),
-//          ),
-//          ChangeNotifierProvider<CategoryBloc>(
-//            create: (context) => CategoryBloc(),
-//          ),
-//          ChangeNotifierProvider<UserPostsBloc>(
-//            create: (context) => UserPostsBloc(),
-//          ),
-//          ChangeNotifierProvider<UserSearchBloc>(
-//            create: (context) => UserSearchBloc(),
-//          ),
-//          ChangeNotifierProvider<PostsCommentsBloc>(
-//            create: (context) => PostsCommentsBloc(),
-//          ),
+          ChangeNotifierProvider<ThemeBloc>(
+            create: (_) {
+              return themeChangeProvider;
+            },
+          ),
+          ChangeNotifierProvider<ArtistsDataBloc>(
+            create: (context) => ArtistsDataBloc(),
+          ),
         ],
-//        child: Consumer<ThemeBloc>(
-//          builder: (BuildContext context, value, Widget child) {
-        child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-//                theme: Styles.themeData(themeChangeProvider.darkTheme, context),
-            home: MyHomePage()));
-//          },
-//        ));
+        child: Consumer<ThemeBloc>(
+          builder: (BuildContext context, value, Widget child) {
+            return MaterialApp(
+                debugShowCheckedModeBanner: false,
+               theme: Styles.themeData(themeChangeProvider.darkTheme, context),
+                home: MyHomePage());
+          },
+        ));
   }
 }
 

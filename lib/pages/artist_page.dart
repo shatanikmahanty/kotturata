@@ -7,15 +7,23 @@ import 'package:kotturata/models/download_progress.dart';
 import 'package:provider_architecture/viewmodel_provider.dart';
 
 class ArtistPage extends StatefulWidget {
-  const ArtistPage(
-      {Key key, @required this.artistName, @required this.artistImageUrl,@required this.tag})
-      : super(key: key);
+  const ArtistPage({
+    Key key,
+    @required this.artistName,
+    @required this.artistImageUrl,
+    @required this.tag,
+    @required this.artistTimestamp,
+  }) : super(key: key);
 
-  final String artistName, artistImageUrl,tag;
+  final String artistName, artistImageUrl, artistTimestamp, tag;
 
   @override
-  _ArtistPageState createState() =>
-      _ArtistPageState(this.artistName, this.artistImageUrl,this.tag);
+  _ArtistPageState createState() => _ArtistPageState(
+        this.artistName,
+        this.artistImageUrl,
+        this.tag,
+        this.artistTimestamp,
+      );
 }
 
 class _ArtistPageState extends State<ArtistPage> {
@@ -24,24 +32,31 @@ class _ArtistPageState extends State<ArtistPage> {
   String searchQuery = '';
   var formKey = GlobalKey<FormState>();
 
-  final String artistName, artistImageUrl,tag;
+  final String artistName, artistImageUrl, tag, artistTimestamp;
 
   List songs = [];
 
-  _ArtistPageState(this.artistName, this.artistImageUrl, this.tag);
+  _ArtistPageState(
+    this.artistName,
+    this.artistImageUrl,
+    this.tag,
+    this.artistTimestamp,
+  );
 
   bool isLoading = true;
 
   Future getSongs() async {
     QuerySnapshot snap = await FirebaseFirestore.instance
         .collection('songs')
-        .where('artist', isEqualTo: artistName)
+        .where('artist_timestamp', isEqualTo: artistTimestamp)
         .get();
     var x = snap.docs;
     songs.clear();
     x.forEach((f) {
       songs.add(f);
     });
+
+    songs.sort((a, b) => a['position'].compareTo(b['position']));
 
     setState(() {
       isLoading = false;
@@ -56,20 +71,19 @@ class _ArtistPageState extends State<ArtistPage> {
 
   Widget buildArtist(_scaffoldKey, double w) {
     return Scaffold(
-      backgroundColor: Colors.grey[800],
       key: _scaffoldKey,
       body: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               SliverAppBar(
-                backgroundColor: Colors.black.withOpacity(0.7),
-                expandedHeight: 350,
+                expandedHeight: 330,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Stack(children: [
                     Hero(
                       tag: tag,
                       child: Container(
                         width: w,
+                        height: 360,
                         child: CachedNetworkImage(
                           imageUrl: artistImageUrl,
                           fit: BoxFit.cover,
@@ -84,11 +98,11 @@ class _ArtistPageState extends State<ArtistPage> {
                         alignment: Alignment.bottomCenter,
                         child: Text(
                           artistName,
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 60,
+                            fontSize: 40,
                             fontWeight: FontWeight.bold,
                             color: Colors.white.withOpacity(0.9),
-
                           ),
                         ),
                       ),
@@ -106,7 +120,12 @@ class _ArtistPageState extends State<ArtistPage> {
                     backgroundColor: Colors.white,
                   ),
                 )
-              : ListView.builder(
+              : songs.isEmpty ? Center(child: Text(
+            "No songs found for $artistName",
+            style: TextStyle(
+              fontSize: 20
+            ),
+          ),) : ListView.builder(
                   itemCount: songs.length,
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kotturata/blocs/artist_bloc.dart';
+import 'package:kotturata/blocs/theme_bloc.dart';
 import 'package:kotturata/pages/artist_page.dart';
 import 'package:kotturata/utils/next_screen.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,12 @@ class _HomePageState extends State<HomePage> {
   String searchQuery = '';
   var formKey = GlobalKey<FormState>();
 
+  final List titles = [
+    /*'Categories', 'Bookmark',*/
+    'Dark Theme',
+  ];
+  final List icons = [Icons.wb_sunny];
+
   bool isListView = false;
 
   String getResultString(int count) {
@@ -36,6 +43,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final ArtistsDataBloc adb = Provider.of<ArtistsDataBloc>(context);
+    final ThemeBloc tb = Provider.of<ThemeBloc>(context);
+
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
     var _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -48,11 +57,22 @@ class _HomePageState extends State<HomePage> {
                 fit: BoxFit.cover)),
         child: Scaffold(
           key: _scaffoldKey,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            title: Text(
+              "Kotturata",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24),
+            ),
+            elevation: 0,
+            iconTheme: IconThemeData(color: Colors.white),
+          ),
+          drawer: getDrawer(tb),
           backgroundColor: Colors.transparent,
           body: Container(
-            margin: EdgeInsets.only(
-              top: 30,
-            ),
             width: w,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,21 +83,16 @@ class _HomePageState extends State<HomePage> {
                   child: Form(
                     key: formKey,
                     child: TextFormField(
-                      style: TextStyle(color: Colors.white),
                       autofocus: false,
                       decoration: InputDecoration(
                         fillColor: Colors.grey.withOpacity(0.5),
                         filled: true,
                         hintText: 'Search for artists',
-                        hintStyle: TextStyle(
-                          color: Colors.white,
-                        ),
                         enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(color: Colors.white)),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(color: Colors.white),
                         ),
                         prefixIcon: searchQuery.trim().length > 0
                             ? IconButton(
@@ -180,7 +195,7 @@ class _HomePageState extends State<HomePage> {
     return buildHome();
   }
 
-  Widget normalView(adb, w) {
+  Widget normalView(ArtistsDataBloc adb, w) {
     if (isListView) {
       return normalListView(adb, w);
     } else {
@@ -188,7 +203,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget searchView(adb, w) {
+  Widget searchView(ArtistsDataBloc adb, w) {
     if (isListView) {
       return searchedListView(adb, w);
     } else {
@@ -196,7 +211,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget searchedListView(adb, w) {
+  Widget searchedListView(ArtistsDataBloc adb, w) {
     return ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
         shrinkWrap: true,
@@ -210,6 +225,7 @@ class _HomePageState extends State<HomePage> {
                   ArtistPage(
                     artistName: adb.searchData[index]['name'],
                     artistImageUrl: adb.searchData[index]['image_url'],
+                    artistTimestamp: adb.searchData[index]['timestamp'],
                     tag: '$index',
                   ));
             },
@@ -232,6 +248,7 @@ class _HomePageState extends State<HomePage> {
                       alignment: Alignment.bottomLeft,
                       child: Text(
                         adb.searchData[index]['name'],
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 23,
@@ -246,7 +263,7 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  Widget normalListView(adb, w) {
+  Widget normalListView(ArtistsDataBloc adb, w) {
     return ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
         itemCount: adb.artistsData.length,
@@ -260,6 +277,7 @@ class _HomePageState extends State<HomePage> {
                   ArtistPage(
                     artistName: adb.artistsData[index]['name'],
                     artistImageUrl: adb.artistsData[index]['image_url'],
+                    artistTimestamp: adb.artistsData[index]['timestamp'],
                     tag: '$index',
                   ));
             },
@@ -282,6 +300,7 @@ class _HomePageState extends State<HomePage> {
                       alignment: Alignment.bottomLeft,
                       child: Text(
                         adb.artistsData[index]['name'],
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 23,
@@ -296,7 +315,7 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  Widget searchedGridView(adb, w) {
+  Widget searchedGridView(ArtistsDataBloc adb, w) {
     return GridView.builder(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
         itemCount: adb.searchData.length,
@@ -315,6 +334,7 @@ class _HomePageState extends State<HomePage> {
                   ArtistPage(
                     artistName: adb.searchData[index]['name'],
                     artistImageUrl: adb.searchData[index]['image_url'],
+                    artistTimestamp: adb.searchData[index]['timestamp'],
                     tag: '$index',
                   ));
             },
@@ -343,9 +363,10 @@ class _HomePageState extends State<HomePage> {
                       alignment: Alignment.bottomCenter,
                       child: Text(
                         adb.searchData[index]['name'],
+                        textAlign: TextAlign.center,
                         style: TextStyle(
-                            color: Colors.black.withOpacity(0.5),
-                            fontSize: 25,
+                            color: Colors.white.withOpacity(0.85),
+                            fontSize: 20,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -357,7 +378,7 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  Widget normalGridView(adb, w) {
+  Widget normalGridView(ArtistsDataBloc adb, w) {
     return GridView.builder(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
         itemCount: adb.artistsData.length,
@@ -376,6 +397,7 @@ class _HomePageState extends State<HomePage> {
                   ArtistPage(
                     artistName: adb.artistsData[index]['name'],
                     artistImageUrl: adb.artistsData[index]['image_url'],
+                    artistTimestamp: adb.artistsData[index]['timestamp'],
                     tag: '$index',
                   ));
             },
@@ -404,9 +426,10 @@ class _HomePageState extends State<HomePage> {
                       alignment: Alignment.bottomCenter,
                       child: Text(
                         adb.artistsData[index]['name'],
+                        textAlign: TextAlign.center,
                         style: TextStyle(
-                            color: Colors.black.withOpacity(0.5),
-                            fontSize: 25,
+                            color: Colors.white.withOpacity(0.85),
+                            fontSize: 20,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -416,5 +439,88 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         });
+  }
+
+  Widget getDrawer(ThemeBloc tb) {
+    return Drawer(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+                color: Colors.black45,
+                padding: EdgeInsets.all(15),
+                height: 140,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Flexible(
+                      flex: 1,
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.grey[400],
+                        backgroundImage: AssetImage("assets/k.png"),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Flexible(
+                      flex: 3,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "Kotturata",
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                )),
+            SizedBox(height: 10),
+            Container(
+              height: 350,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: ListTile(
+                  title: Row(
+                    children: [
+                      Text(
+                        titles[0],
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                        ),
+                      ),
+                      Spacer(),
+                      Switch(
+                        activeColor: Colors.white,
+                        value: tb.darkTheme,
+                        onChanged: (value) async {
+                          // setState(() {
+                          tb.darkTheme = value;
+                          // }); //Storing notification status value to shared preferences.
+                        },
+                      ),
+                    ],
+                  ),
+                  leading: CircleAvatar(
+                      backgroundColor: Colors.grey[300],
+                      child: Icon(
+                        !tb.darkTheme
+                            ? Icons.wb_sunny
+                            : Icons.nights_stay_rounded,
+                        color: Colors.black87,
+                      )),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
