@@ -70,185 +70,187 @@ class _ArtistPageState extends State<ArtistPage> {
     super.initState();
   }
 
-
-  Widget buildArtist(_scaffoldKey, double w) {
+  Widget buildArtist(_scaffoldKey, double w,double h) {
     return Scaffold(
-      key: _scaffoldKey,
-      body: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              SliverAppBar(
-                expandedHeight: 330,
-                floating: false,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Stack(children: [
-                    Hero(
-                      tag: tag,
-                      child: Container(
-                        width: w,
-                        height: 360,
-                        child: CachedNetworkImage(
-                          imageUrl: artistImageUrl,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              Center(child: CircularProgressIndicator()),
-                        ),
-                      ),
+        key: _scaffoldKey,
+        body: SingleChildScrollView(
+            child: Container(
+              height: h,
+              child: Column(
+          children: [
+              Stack(children: [
+                Hero(
+                  tag: tag,
+                  child: Container(
+                    width: w,
+                    height: 360,
+                    child: CachedNetworkImage(
+                      imageUrl: artistImageUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          Center(child: CircularProgressIndicator()),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 30.0),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Text(
-                          artistName,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 40,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white.withOpacity(0.9),
-                          ),
-                        ),
-                      ),
-                    )
-                  ]),
-                  collapseMode: CollapseMode.parallax,
-                  //CachedNetworkImageProvider(imageUrl),
+                  ),
                 ),
-              ),
-            ];
-          },
-          body: isLoading
-              ? Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.white,
+                Positioned(
+                  width: w,
+                  bottom: 15,
+                  child: Text(
+                    artistName,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white.withOpacity(0.9),
+                    ),
                   ),
                 )
-              : songs.isEmpty ? Center(child: Text(
-            "No songs found for $artistName",
-            style: TextStyle(
-              fontSize: 20
-            ),
-          ),) : ListView.builder(
-                  itemCount: songs.length,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          width: w - 30,
-                          height: 60,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                height: 60,
-                                padding: EdgeInsets.only(left: 5.0),
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  '${index + 1}.',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                height: 60,
-                                alignment: Alignment.centerLeft,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Text(
-                                    songs[index]['name'],
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
+              ]),
+              //CachedNetworkImageProvider(imageUrl),
+              Expanded(
+                child: isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.white,
+                        ),
+                      )
+                    : songs.isEmpty
+                        ? Center(
+                            child: Text(
+                              "No songs found for $artistName",
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          )
+                        : ListView.builder(
+                            itemCount: songs.length,
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    width: w - 30,
+                                    height: 60,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                  ),
-                                ),
-                              ),
-                              Spacer(),
-                              Container(
-                                height: 60,
-                                alignment: Alignment.center,
-                                child: ViewModelProvider<
-                                    DownloadProgressModel>.withConsumer(
-                                  viewModel: DownloadProgressModel(),
-                                  reuseExisting: true,
-                                  builder: (context, model, child) => Stack(
-                                    children: <Widget>[
-                                      Center(
-                                        child: SizedBox(
-                                          width: 100,
-                                          height: 100,
-                                          child: model.downloadProgress == null
-                                              ? Center(
-                                                  child:
-                                                      CircularProgressIndicator())
-                                              : model.downloadProgress < 0
-                                                  ? IconButton(
-                                                      icon: Icon(
-                                                        Icons.file_download,
-                                                      ),
-                                                      onPressed: () {
-                                                        model.startDownloading(
-                                                            context,
-                                                            songs[index][
-                                                                'download_url'],
-                                                            songs[index]
-                                                                ['name'],
-                                                        index);
-                                                      },
-                                                    )
-                                                  : model.downloadProgress !=
-                                                          100
-                                                      ? Stack(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          children: [
-                                                            CircularProgressIndicator(
-                                                              strokeWidth: 5,
-                                                              value: model
-                                                                  .downloadProgress,
-                                                              backgroundColor:
-                                                                  Colors.grey[
-                                                                      200],
-                                                            ),
-                                                            IconButton(
-                                                              icon: Icon(
-                                                                  Icons.clear),
-                                                              onPressed: () {
-                                                                model.stopDownloading(
-                                                                    context,index);
-                                                              },
-                                                            )
-                                                          ],
-                                                        )
-                                                      : Icon(Icons.check),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          height: 60,
+                                          padding: EdgeInsets.only(left: 5.0),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            '${index + 1}.',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ));
-                  })),
-    );
+                                        Container(
+                                          height: 60,
+                                          alignment: Alignment.centerLeft,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: Text(
+                                              songs[index]['name'],
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        Container(
+                                          height: 60,
+                                          alignment: Alignment.center,
+                                          child: ViewModelProvider<
+                                              DownloadProgressModel>.withConsumer(
+                                            viewModel: DownloadProgressModel(),
+                                            reuseExisting: true,
+                                            builder: (context, model, child) =>
+                                                Stack(
+                                              children: <Widget>[
+                                                Center(
+                                                  child: SizedBox(
+                                                    width: 100,
+                                                    height: 100,
+                                                    child: model.downloadProgress ==
+                                                            null
+                                                        ? Center(
+                                                            child:
+                                                                CircularProgressIndicator())
+                                                        : model.downloadProgress < 0
+                                                            ? IconButton(
+                                                                icon: Icon(
+                                                                  Icons
+                                                                      .file_download,
+                                                                ),
+                                                                onPressed: () {
+                                                                  model.startDownloading(
+                                                                      context,
+                                                                      songs[index][
+                                                                          'download_url'],
+                                                                      songs[index]
+                                                                          ['name'],
+                                                                      index);
+                                                                },
+                                                              )
+                                                            : model.downloadProgress !=
+                                                                    100
+                                                                ? Stack(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    children: [
+                                                                      CircularProgressIndicator(
+                                                                        strokeWidth:
+                                                                            5,
+                                                                        value: model
+                                                                            .downloadProgress,
+                                                                        backgroundColor:
+                                                                            Colors.grey[
+                                                                                200],
+                                                                      ),
+                                                                      IconButton(
+                                                                        icon: Icon(Icons
+                                                                            .clear),
+                                                                        onPressed:
+                                                                            () {
+                                                                          model.stopDownloading(
+                                                                              context,
+                                                                              index);
+                                                                        },
+                                                                      )
+                                                                    ],
+                                                                  )
+                                                                : Icon(Icons.check),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ));
+                            }),
+              )
+          ],
+        ),
+            )));
   }
 
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
-    // double h = MediaQuery.of(context).size.height;
+    double h = MediaQuery.of(context).size.height;
     var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-    return buildArtist(_scaffoldKey, w);
+    return buildArtist(_scaffoldKey, w,h);
   }
 }
-
