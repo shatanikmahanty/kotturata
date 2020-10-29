@@ -1,11 +1,17 @@
 import 'dart:io';
 
 import 'package:ext_storage/ext_storage.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+// import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart';
 import 'package:flutter/foundation.dart';
 import 'package:kotturata/utils/toast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../main.dart';
 
 class DownloadProgressModel extends ChangeNotifier {
   double _progress = -1;
@@ -15,14 +21,66 @@ class DownloadProgressModel extends ChangeNotifier {
   var request;
   Client client;
 
-  void stopDownloading(context) async {
+  void stopDownloading(BuildContext context,int id) async {
     client.close();
+    flutterLocalNotificationsPlugin.cancel(id);
     _progress = -1;
     openToast1(context, "Download cancelled");
     notifyListeners();
   }
 
-  void startDownloading(context, downloadUrl, fileName) async {
+  Future<void> _showProgressNotification(int id, String name) async {
+    const int maxProgress = 100;
+    while (true) {
+      if (_progress < 0 || _progress == 100) {
+        flutterLocalNotificationsPlugin.cancel(id);
+        break;
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 1), () async {
+        final AndroidNotificationDetails androidPlatformChannelSpecifics =
+            AndroidNotificationDetails('download channel', 'download channel',
+                'channel for downloading',
+                channelShowBadge: false,
+                importance: Importance.max,
+                priority: Priority.high,
+                onlyAlertOnce: true,
+                showProgress: true,
+                maxProgress: maxProgress,
+                progress: (_progress * 100).toInt());
+        final NotificationDetails platformChannelSpecifics =
+            NotificationDetails(android: androidPlatformChannelSpecifics);
+        await flutterLocalNotificationsPlugin.show(
+            id,
+            'Downloading $name.mp3......',
+            '${(_progress * 100).toInt()}%',
+            platformChannelSpecifics,
+            payload: 'item x');
+      });
+    }
+  }
+
+  Future<void> _showDownloadCompleteNotification(int id, String name) async {
+    await Future<void>.delayed(const Duration(milliseconds: 1), () async {
+      final AndroidNotificationDetails androidPlatformChannelSpecifics =
+          AndroidNotificationDetails(
+        'download channel',
+        'download channel',
+        'channel for downloading',
+        channelShowBadge: false,
+        importance: Importance.max,
+        priority: Priority.high,
+        onlyAlertOnce: true,
+      );
+      final NotificationDetails platformChannelSpecifics =
+          NotificationDetails(android: androidPlatformChannelSpecifics);
+      await flutterLocalNotificationsPlugin.show(id, 'Download complete',
+          'Successfully downloaded $name.mp3', platformChannelSpecifics,
+          payload: 'item x');
+    });
+  }
+
+  void startDownloading(BuildContext context, String downloadUrl,
+      String fileName, int index) async {
     _progress = null;
     notifyListeners();
 
@@ -35,6 +93,7 @@ class DownloadProgressModel extends ChangeNotifier {
     // final contentLength = double.parse(response.headers['x-decompressed-content-length']);
 
     _progress = 0;
+    _showProgressNotification(index, fileName);
     notifyListeners();
 
     List<int> bytes = [];
@@ -49,6 +108,7 @@ class DownloadProgressModel extends ChangeNotifier {
       },
       onDone: () async {
         _progress = 100;
+        _showDownloadCompleteNotification(index, fileName);
         notifyListeners();
         await file.writeAsBytes(bytes);
         openToast1(
@@ -66,7 +126,6 @@ class DownloadProgressModel extends ChangeNotifier {
   }
 
   Future<File> _getFile(String filename, context) async {
-//    final dir = await getDownloadsDirectory();
     var status = await Permission.storage.status;
     if (status.isUndetermined) {
       Map<Permission, PermissionStatus> permissions = await [

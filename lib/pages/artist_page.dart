@@ -54,6 +54,7 @@ class _ArtistPageState extends State<ArtistPage> {
     songs.clear();
     x.forEach((f) {
       songs.add(f);
+      print(songs.length);
     });
 
     songs.sort((a, b) => a['position'].compareTo(b['position']));
@@ -65,9 +66,10 @@ class _ArtistPageState extends State<ArtistPage> {
 
   @override
   void initState() {
-    super.initState();
     getSongs();
+    super.initState();
   }
+
 
   Widget buildArtist(_scaffoldKey, double w) {
     return Scaffold(
@@ -136,14 +138,8 @@ class _ArtistPageState extends State<ArtistPage> {
                           width: w - 30,
                           height: 60,
                           decoration: BoxDecoration(
-                              color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                new BoxShadow(
-                                  color: Colors.black,
-                                  blurRadius: 8,
-                                )
-                              ]),
+                              ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -203,7 +199,8 @@ class _ArtistPageState extends State<ArtistPage> {
                                                             songs[index][
                                                                 'download_url'],
                                                             songs[index]
-                                                                ['name']);
+                                                                ['name'],
+                                                        index);
                                                       },
                                                     )
                                                   : model.downloadProgress !=
@@ -225,7 +222,7 @@ class _ArtistPageState extends State<ArtistPage> {
                                                                   Icons.clear),
                                                               onPressed: () {
                                                                 model.stopDownloading(
-                                                                    context);
+                                                                    context,index);
                                                               },
                                                             )
                                                           ],
@@ -253,3 +250,4 @@ class _ArtistPageState extends State<ArtistPage> {
     return buildArtist(_scaffoldKey, w);
   }
 }
+
