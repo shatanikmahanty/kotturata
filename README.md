@@ -4,13 +4,17 @@ Flutter application for downloading music.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+To setup project run the following commands on root directory : 
 
-A few resources to get you started if this is your first Flutter project:
+1. flutter pub get
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+To run project : 
+flutter run
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+To run project as release build :
+flutter run -d "device_name" --release       
+##### Replace "device_name" with your device name. To check device name run  "flutter devices" on root directory
+
+###### Below attached is a sample run of flutter devices command : 
+
+![alt text](https://github.com/shatanikmahanty/kotturata/blob/master/flutter%20devices.png)
