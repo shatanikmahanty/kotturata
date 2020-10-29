@@ -246,13 +246,26 @@ class _HomePageState extends State<HomePage> {
                         horizontal: 20.0, vertical: 8.0),
                     child: Align(
                       alignment: Alignment.bottomLeft,
-                      child: Text(
-                        adb.searchData[index]['name'],
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 23,
-                            fontWeight: FontWeight.w500),
+                      child: Row(
+                        children: [
+                          Text(
+                            '${index + 1}.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 23,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          SizedBox(width: 25,),
+                          Text(
+                            adb.searchData[index]['name'],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 23,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -298,13 +311,26 @@ class _HomePageState extends State<HomePage> {
                         horizontal: 20.0, vertical: 8.0),
                     child: Align(
                       alignment: Alignment.bottomLeft,
-                      child: Text(
-                        adb.artistsData[index]['name'],
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 23,
-                            fontWeight: FontWeight.w500),
+                      child: Row(
+                        children: [
+                          Text(
+                            '${index + 1}.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 23,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          SizedBox(width: 25,),
+                          Text(
+                            adb.artistsData[index]['name'],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 23,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
                       ),
                     ),
                   ),

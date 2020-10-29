@@ -79,6 +79,7 @@ class _ArtistPageState extends State<ArtistPage> {
             return <Widget>[
               SliverAppBar(
                 expandedHeight: 330,
+                floating: false,
                 flexibleSpace: FlexibleSpaceBar(
                   background: Stack(children: [
                     Hero(

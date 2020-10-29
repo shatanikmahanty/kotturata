@@ -1,10 +1,8 @@
 import 'dart:io';
-
 import 'package:ext_storage/ext_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-// import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart';
 import 'package:flutter/foundation.dart';
 import 'package:kotturata/utils/toast.dart';
@@ -60,7 +58,7 @@ class DownloadProgressModel extends ChangeNotifier {
   }
 
   Future<void> _showDownloadCompleteNotification(int id, String name) async {
-    await Future<void>.delayed(const Duration(milliseconds: 1), () async {
+
       final AndroidNotificationDetails androidPlatformChannelSpecifics =
           AndroidNotificationDetails(
         'download channel',
@@ -73,10 +71,10 @@ class DownloadProgressModel extends ChangeNotifier {
       );
       final NotificationDetails platformChannelSpecifics =
           NotificationDetails(android: androidPlatformChannelSpecifics);
-      await flutterLocalNotificationsPlugin.show(id, 'Download complete',
+      await flutterLocalNotificationsPlugin.show(id + 100, 'Download complete',
           'Successfully downloaded $name.mp3', platformChannelSpecifics,
           payload: 'item x');
-    });
+
   }
 
   void startDownloading(BuildContext context, String downloadUrl,
