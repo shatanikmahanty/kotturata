@@ -18,3 +18,5 @@ flutter run -d "device_name" --release
 ###### Below attached is a sample run of flutter devices command : 
 
 ![alt text](https://github.com/shatanikmahanty/kotturata/blob/master/flutter%20devices.png)
+
+## If there is any issue in android installation go to File -> Invalidate Caches / Restart. This fixes most of the issues (if any) while importing the file. 
