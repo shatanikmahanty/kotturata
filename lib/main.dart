@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:kotturata/blocs/artist_bloc.dart';
 import 'package:kotturata/models/download_progress.dart';
 import 'package:kotturata/styles.dart';
@@ -58,7 +57,7 @@ void main() async {
   //   projectId: 'kotturata-2425c',
   // );
 
-  final NotificationAppLaunchDetails notificationAppLaunchDetails =
+  // final NotificationAppLaunchDetails notificationAppLaunchDetails =
   await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
   const AndroidInitializationSettings initializationSettingsAndroid =
@@ -93,16 +92,15 @@ void main() async {
         selectNotificationSubject.add(payload);
       });
 
-  FirebaseApp app;
-  if (Firebase.apps.length == 0)
-    app = await Firebase
-        .initializeApp();
+  // FirebaseApp app;
+  if (Firebase.apps.length == 0) {
+    // app =
+    await Firebase.initializeApp();
+  }
   //name: 'kotturata', options: firebaseOptions);
   // final FirebaseStorage storage = FirebaseStorage(
   //     app: app, storageBucket: 'gs://kotturata-2425c.appspot.com');
-  // await FlutterDownloader.initialize(
-  //     debug: true // optional: set false to disable printing logs to console
-  // );
+
   runApp(MyApp());
 }
 

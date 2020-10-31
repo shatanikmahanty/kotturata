@@ -3,7 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kotturata/blocs/theme_bloc.dart';
 import 'package:kotturata/models/download_progress.dart';
+import 'package:provider/provider.dart';
 import 'package:provider_architecture/viewmodel_provider.dart';
 
 class ArtistPage extends StatefulWidget {
@@ -70,14 +72,47 @@ class _ArtistPageState extends State<ArtistPage> {
     super.initState();
   }
 
-  Widget buildArtist(_scaffoldKey, double w,double h) {
+  void openConfirmation(context, title, message, model, index, fileName) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Text(message),
+            title: Text(title),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () async {
+
+                    model.deleteFile();
+
+                    Navigator.pop(context);
+                    model.startDownloading(
+                        context,
+                        songs[index]['download_url'],
+                        songs[index]['name'],
+                        index);
+                    setState(() {});
+                  },
+                  child: Text('Yes')),
+              FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('No'))
+            ],
+          );
+        });
+  }
+
+  Widget buildArtist(_scaffoldKey, double w, double h, ThemeBloc tb) {
     return Scaffold(
         key: _scaffoldKey,
+        backgroundColor: Colors.transparent,
         body: SingleChildScrollView(
             child: Container(
-              height: h,
-              child: Column(
-          children: [
+          height: h,
+          child: Stack(
+            children: [
               Stack(children: [
                 Hero(
                   tag: tag,
@@ -93,8 +128,20 @@ class _ArtistPageState extends State<ArtistPage> {
                   ),
                 ),
                 Positioned(
+                    top: 30,
+                    left: 10,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_outlined,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    )),
+                Positioned(
                   width: w,
-                  bottom: 15,
+                  bottom: 50,
                   child: Text(
                     artistName,
                     textAlign: TextAlign.center,
@@ -107,142 +154,180 @@ class _ArtistPageState extends State<ArtistPage> {
                 )
               ]),
               //CachedNetworkImageProvider(imageUrl),
-              Expanded(
-                child: isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(
-                          backgroundColor: Colors.white,
-                        ),
-                      )
-                    : songs.isEmpty
-                        ? Center(
-                            child: Text(
-                              "No songs found for $artistName",
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          )
-                        : ListView.builder(
-                            itemCount: songs.length,
-                            shrinkWrap: true,
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    width: w - 30,
-                                    height: 60,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          height: 60,
-                                          padding: EdgeInsets.only(left: 5.0),
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            '${index + 1}.',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                            ),
+              Positioned(
+                top: 330,
+                child: Container(
+                  width: w,
+                  height: h - 330,
+                  decoration: BoxDecoration(
+                    color: tb.darkTheme
+                        ? Colors.grey[900] /*(0xFF151515)*/
+                        : Colors.grey[50],
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(30),
+                        topLeft: Radius.circular(30)),
+                  ),
+                  child: isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            backgroundColor: Colors.white,
+                          ),
+                        )
+                      : songs.isEmpty
+                          ? Center(
+                              child: Text(
+                                "No songs found for $artistName",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount: songs.length,
+                              shrinkWrap: true,
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Card(
+                                        elevation: 10,
+                                        color: tb.darkTheme
+                                            ? Colors.white
+                                            : Colors.black,
+                                        shape: RoundedRectangleBorder(
+                                          side: BorderSide(
+                                            width: 3,
+                                            color: Colors.blueGrey,
                                           ),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                         ),
-                                        Container(
+                                        shadowColor: Colors.transparent,
+                                        child: Container(
+                                          width: w - 30,
                                           height: 60,
-                                          alignment: Alignment.centerLeft,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: Text(
-                                              songs[index]['name'],
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18,
-                                              ),
-                                            ),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
-                                        ),
-                                        Spacer(),
-                                        Container(
-                                          height: 60,
-                                          alignment: Alignment.center,
-                                          child: ViewModelProvider<
-                                              DownloadProgressModel>.withConsumer(
-                                            viewModel: DownloadProgressModel(),
-                                            reuseExisting: true,
-                                            builder: (context, model, child) =>
-                                                Stack(
-                                              children: <Widget>[
-                                                Center(
-                                                  child: SizedBox(
-                                                    width: 100,
-                                                    height: 100,
-                                                    child: model.downloadProgress ==
-                                                            null
-                                                        ? Center(
-                                                            child:
-                                                                CircularProgressIndicator())
-                                                        : model.downloadProgress < 0
-                                                            ? IconButton(
-                                                                icon: Icon(
-                                                                  Icons
-                                                                      .file_download,
-                                                                ),
-                                                                onPressed: () {
-                                                                  model.startDownloading(
-                                                                      context,
-                                                                      songs[index][
-                                                                          'download_url'],
-                                                                      songs[index]
-                                                                          ['name'],
-                                                                      index);
-                                                                },
-                                                              )
-                                                            : model.downloadProgress !=
-                                                                    100
-                                                                ? Stack(
-                                                                    alignment:
-                                                                        Alignment
-                                                                            .center,
-                                                                    children: [
-                                                                      CircularProgressIndicator(
-                                                                        strokeWidth:
-                                                                            5,
-                                                                        value: model
-                                                                            .downloadProgress,
-                                                                        backgroundColor:
-                                                                            Colors.grey[
-                                                                                200],
-                                                                      ),
-                                                                      IconButton(
-                                                                        icon: Icon(Icons
-                                                                            .clear),
-                                                                        onPressed:
-                                                                            () {
-                                                                          model.stopDownloading(
-                                                                              context,
-                                                                              index);
-                                                                        },
-                                                                      )
-                                                                    ],
-                                                                  )
-                                                                : Icon(Icons.check),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                height: 60,
+                                                padding:
+                                                    EdgeInsets.only(left: 5.0),
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  '${index + 1}.',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: tb.darkTheme
+                                                        ? Colors.black
+                                                        : Colors.white,
+                                                    fontSize: 18,
                                                   ),
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                              Container(
+                                                height: 60,
+                                                alignment: Alignment.centerLeft,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    songs[index]['name'],
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: tb.darkTheme
+                                                          ? Colors.black
+                                                          : Colors.white,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Spacer(),
+                                              Container(
+                                                height: 60,
+                                                alignment: Alignment.center,
+                                                child: ViewModelProvider<
+                                                    DownloadProgressModel>.withConsumer(
+                                                  viewModel: DownloadProgressModel(),
+                                                  reuseExisting: true,
+                                                  builder:
+                                                      (context, model, child) =>
+                                                          Stack(
+                                                    children: <Widget>[
+                                                      Center(
+                                                        child: SizedBox(
+                                                          width: 100,
+                                                          height: 100,
+                                                          child: model.downloadProgress ==
+                                                                      null
+                                                                  ? Center(
+                                                                      child:
+                                                                          CircularProgressIndicator())
+                                                                  : model.downloadProgress <
+                                                                          0
+                                                                      ? IconButton(
+                                                                          icon:
+                                                                              Icon(
+                                                                            Icons.file_download,
+                                                                            color: tb.darkTheme
+                                                                                ? Colors.black
+                                                                                : Colors.white,
+                                                                          ),
+                                                                          onPressed:
+                                                                              () {
+                                                                            model.startDownloading(
+                                                                                context,
+                                                                                songs[index]['download_url'],
+                                                                                songs[index]['name'],
+                                                                                index);
+                                                                          },
+                                                                        )
+                                                                      : model.downloadProgress !=
+                                                                              100
+                                                                          ? Stack(
+                                                                              alignment: Alignment.center,
+                                                                              children: [
+                                                                                CircularProgressIndicator(
+                                                                                  strokeWidth: 5,
+                                                                                  value: model.downloadProgress,
+                                                                                  backgroundColor: Colors.grey[200],
+                                                                                ),
+                                                                                IconButton(
+                                                                                  icon: Icon(
+                                                                                    Icons.clear,
+                                                                                    color: tb.darkTheme ? Colors.black : Colors.white,
+                                                                                  ),
+                                                                                  onPressed: () {
+                                                                                    model.stopDownloading(context, index);
+                                                                                  },
+                                                                                )
+                                                                              ],
+                                                                            )
+                                                                          : Icon(
+                                                                              Icons.check,
+                                                                              color: tb.darkTheme ? Colors.black : Colors.white,
+                                                                            ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ));
-                            }),
+                                        )));
+                              }),
+                ),
               )
-          ],
-        ),
-            )));
+            ],
+          ),
+        )));
   }
 
   @override
@@ -251,6 +336,7 @@ class _ArtistPageState extends State<ArtistPage> {
     double h = MediaQuery.of(context).size.height;
     var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-    return buildArtist(_scaffoldKey, w,h);
+    ThemeBloc tb = Provider.of<ThemeBloc>(context);
+    return buildArtist(_scaffoldKey, w, h, tb);
   }
 }

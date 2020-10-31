@@ -16,10 +16,11 @@ class DownloadProgressModel extends ChangeNotifier {
 
   get downloadProgress => _progress;
 
+  bool isFileExists = false;
   var request;
   Client client;
 
-  void stopDownloading(BuildContext context,int id) async {
+  void stopDownloading(BuildContext context, int id) async {
     client.close();
     flutterLocalNotificationsPlugin.cancel(id);
     _progress = -1;
@@ -58,23 +59,21 @@ class DownloadProgressModel extends ChangeNotifier {
   }
 
   Future<void> _showDownloadCompleteNotification(int id, String name) async {
-
-      final AndroidNotificationDetails androidPlatformChannelSpecifics =
-          AndroidNotificationDetails(
-        'download channel',
-        'download channel',
-        'channel for downloading',
-        channelShowBadge: false,
-        importance: Importance.max,
-        priority: Priority.high,
-        onlyAlertOnce: true,
-      );
-      final NotificationDetails platformChannelSpecifics =
-          NotificationDetails(android: androidPlatformChannelSpecifics);
-      await flutterLocalNotificationsPlugin.show(id + 100, 'Download complete',
-          'Successfully downloaded $name.mp3', platformChannelSpecifics,
-          payload: 'item x');
-
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'download channel',
+      'download channel',
+      'channel for downloading',
+      channelShowBadge: false,
+      importance: Importance.max,
+      priority: Priority.high,
+      onlyAlertOnce: true,
+    );
+    final NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(id + 100, 'Download complete',
+        'Successfully downloaded $name.mp3', platformChannelSpecifics,
+        payload: 'item x');
   }
 
   void startDownloading(BuildContext context, String downloadUrl,
@@ -106,15 +105,12 @@ class DownloadProgressModel extends ChangeNotifier {
       },
       onDone: () async {
         _progress = 100;
+        isFileExists = true;
         _showDownloadCompleteNotification(index, fileName);
-        notifyListeners();
         await file.writeAsBytes(bytes);
+        notifyListeners();
         openToast1(
             context, "Download successful. File saved to downloads directory.");
-        Future.delayed(const Duration(milliseconds: 500), () {
-          _progress = -1;
-          notifyListeners();
-        });
       },
       onError: (e) {
         print(e);
