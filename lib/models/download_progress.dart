@@ -81,6 +81,47 @@ class DownloadProgressModel extends ChangeNotifier {
     _progress = null;
     notifyListeners();
 
+    String dir;
+    if (Platform.isIOS) {
+      dir = (await getApplicationDocumentsDirectory()).path;
+    } else if (Platform.isAndroid) {
+      dir = await ExtStorage.getExternalStoragePublicDirectory(
+          ExtStorage.DIRECTORY_DOWNLOADS);
+    }
+
+    String fullPath = "$dir/$fileName";
+    if (await File(fullPath).exists()) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Text("You have already downloaded this file"),
+              title: Text("Do you want to download again ?"),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      startActualDownload(context, downloadUrl, index, fileName);
+                    },
+                    child: Text('Yes')),
+                FlatButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _progress = -1;
+                      notifyListeners();
+                      return;
+                    },
+                    child: Text('No'))
+              ],
+            );
+          });
+    } else {
+      startActualDownload(context, downloadUrl, index, fileName);
+    }
+  }
+
+  void startActualDownload(BuildContext context, String downloadUrl, int index,
+      String fileName) async {
     final url = downloadUrl;
     request = Request('GET', Uri.parse(url));
     client = Client();
@@ -109,8 +150,6 @@ class DownloadProgressModel extends ChangeNotifier {
         _showDownloadCompleteNotification(index, fileName);
         await file.writeAsBytes(bytes);
         notifyListeners();
-        openToast1(
-            context, "Download successful. File saved to downloads directory.");
       },
       onError: (e) {
         print(e);

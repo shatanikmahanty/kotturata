@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ext_storage/ext_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kotturata/blocs/theme_bloc.dart';
 import 'package:kotturata/models/download_progress.dart';
+import 'package:kotturata/utils/dialog.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider_architecture/viewmodel_provider.dart';
 
@@ -37,6 +42,22 @@ class _ArtistPageState extends State<ArtistPage> {
   final String artistName, artistImageUrl, tag, artistTimestamp;
 
   List songs = [];
+
+  // Future checkFileExists(String fileName) async {
+  //   String dir;
+  //   if (Platform.isIOS) {
+  //     dir = (await getApplicationDocumentsDirectory()).path;
+  //   } else if (Platform.isAndroid) {
+  //     dir = await ExtStorage.getExternalStoragePublicDirectory(
+  //         ExtStorage.DIRECTORY_DOWNLOADS);
+  //   }
+  //
+  //   String fullPath = "$dir/$fileName";
+  //   if (await File(fullPath).exists()) {
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   _ArtistPageState(
     this.artistName,
@@ -72,37 +93,6 @@ class _ArtistPageState extends State<ArtistPage> {
     super.initState();
   }
 
-  void openConfirmation(context, title, message, model, index, fileName) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: Text(message),
-            title: Text(title),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () async {
-
-                    model.deleteFile();
-
-                    Navigator.pop(context);
-                    model.startDownloading(
-                        context,
-                        songs[index]['download_url'],
-                        songs[index]['name'],
-                        index);
-                    setState(() {});
-                  },
-                  child: Text('Yes')),
-              FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text('No'))
-            ],
-          );
-        });
-  }
 
   Widget buildArtist(_scaffoldKey, double w, double h, ThemeBloc tb) {
     return Scaffold(
