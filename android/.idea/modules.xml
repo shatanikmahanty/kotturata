@@ -2,13 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android.iml" filepath="$PROJECT_DIR$/.idea/modules/android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/android.iml" filepath="$PROJECT_DIR$/.idea/android.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/android.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/android.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/-353663414/android.cloud_firestore.iml" filepath="$PROJECT_DIR$/.idea/modules/-353663414/android.cloud_firestore.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1976958986/android.ext_storage.iml" filepath="$PROJECT_DIR$/.idea/modules/-1976958986/android.ext_storage.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/-2132311849/android.firebase_core.iml" filepath="$PROJECT_DIR$/.idea/modules/-2132311849/android.firebase_core.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/1756070657/android.firebase_storage.iml" filepath="$PROJECT_DIR$/.idea/modules/1756070657/android.firebase_storage.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1731225095/android.flutter_downloader.iml" filepath="$PROJECT_DIR$/.idea/modules/-1731225095/android.flutter_downloader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/295529482/android.flutter_local_notifications.iml" filepath="$PROJECT_DIR$/.idea/modules/295529482/android.flutter_local_notifications.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/1815451408/android.path_provider.iml" filepath="$PROJECT_DIR$/.idea/modules/1815451408/android.path_provider.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1411815809/android.permission_handler.iml" filepath="$PROJECT_DIR$/.idea/modules/-1411815809/android.permission_handler.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/-921426724/android.shared_preferences.iml" filepath="$PROJECT_DIR$/.idea/modules/-921426724/android.shared_preferences.iml" />
