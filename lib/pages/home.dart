@@ -64,7 +64,8 @@ class _HomePageState extends State<HomePage> {
               "Kotturata",
               style: TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  fontFamily: "FuturaHeavy",
+                  letterSpacing: 1,
                   fontSize: 24),
             ),
             elevation: 0,
@@ -157,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                               "All Artists",
                               style: TextStyle(
                                   fontSize: 25,
-                                  fontWeight: FontWeight.w600,
+                                  fontFamily: "FuturaHeavy",
                                   color: Colors.white,
                                   letterSpacing: 0.8),
                             ),
@@ -254,16 +255,18 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 23,
-                                fontWeight: FontWeight.w500),
+                                fontFamily: "FuturaHeavy"),
                           ),
-                          SizedBox(width: 25,),
+                          SizedBox(
+                            width: 25,
+                          ),
                           Text(
                             adb.searchData[index]['name'],
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 23,
-                                fontWeight: FontWeight.w500),
+                                fontFamily: "FuturaHeavy"),
                           ),
                         ],
                       ),
@@ -319,16 +322,18 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 23,
-                                fontWeight: FontWeight.w500),
+                                fontFamily: "FuturaHeavy"),
                           ),
-                          SizedBox(width: 25,),
+                          SizedBox(
+                            width: 25,
+                          ),
                           Text(
                             adb.artistsData[index]['name'],
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 23,
-                                fontWeight: FontWeight.w500),
+                                fontFamily: "FuturaHeavy"),
                           ),
                         ],
                       ),
@@ -372,31 +377,48 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.circular(25),
                 ),
                 shadowColor: Colors.transparent,
-                child: Container(
-                  width: w - 30,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(25),
-                    image: DecorationImage(
-                        image: CachedNetworkImageProvider(
-                          adb.searchData[index]['image_url'],
-                        ),
-                        fit: BoxFit.cover),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Text(
-                        adb.searchData[index]['name'],
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white.withOpacity(0.85),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                        image: DecorationImage(
+                            image: CachedNetworkImageProvider(
+                              adb.searchData[index]['image_url'],
+                            ),
+                            fit: BoxFit.cover),
                       ),
                     ),
-                  ),
+                    Positioned(
+                        bottom: 0,
+                        height: 50,
+                        width: w / 2 - 20,
+                        child: Container(
+                          height: 50,
+                          width: w / 2 - 20,
+                          decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.7),
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(25),
+                                bottomRight: Radius.circular(25),
+                              )),
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                adb.searchData[index]['name'],
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white.withOpacity(0.85),
+                                    fontSize: 15,
+                                    fontFamily: "FuturaHeavy"),
+                              ),
+                            ),
+                          ),
+                        ))
+                  ],
                 ),
               ),
             ),
@@ -435,31 +457,49 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.circular(25),
                 ),
                 shadowColor: Colors.transparent,
-                child: Container(
-                  width: w - 30,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(25),
-                    image: DecorationImage(
-                        image: CachedNetworkImageProvider(
-                          adb.artistsData[index]['image_url'],
-                        ),
-                        fit: BoxFit.cover),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Text(
-                        adb.artistsData[index]['name'],
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.white.withOpacity(0.85),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
+                child: Stack(
+                  children: [
+                    Container(
+                      width: w - 30,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                        image: DecorationImage(
+                            image: CachedNetworkImageProvider(
+                              adb.artistsData[index]['image_url'],
+                            ),
+                            fit: BoxFit.cover),
                       ),
                     ),
-                  ),
+                    Positioned(
+                        bottom: 0,
+                        height: 50,
+                        width: w / 2 - 20,
+                        child: Container(
+                          height: 50,
+                          width: w / 2 - 20,
+                          decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.7),
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(25),
+                                bottomRight: Radius.circular(25),
+                              )),
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                adb.artistsData[index]['name'],
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white.withOpacity(0.85),
+                                    fontSize: 15,
+                                    fontFamily: "FuturaHeavy"),
+                              ),
+                            ),
+                          ),
+                        ))
+                  ],
                 ),
               ),
             ),
@@ -499,7 +539,8 @@ class _HomePageState extends State<HomePage> {
                           Text(
                             "Kotturata",
                             style: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.w600),
+                                fontSize: 17,
+                                fontFamily: "FuturaHeavy"),
                           ),
                         ],
                       ),
